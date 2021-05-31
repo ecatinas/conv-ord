@@ -1,0 +1,526 @@
+% version 20-09-20
+\documentclass[review]{siamart190516}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}%
+\usepackage{stackengine}
+\usepackage{hyperref,numinsec}
+\usepackage{algorithmic}
+\usepackage{numprint}
+\npdecimalsign{.}
+\usepackage[normalem]{ulem}
+
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{pgfplots}
+\usepgfplotslibrary{groupplots}
+\usepackage{tikz}
+\usepackage{lmodern,accents}
+\usetikzlibrary {math}
+
+
+\begin{document}
+
+\newcommand\barbelow[1]{\stackunder[1.2pt]{$#1$}{\rule{.8ex}{.075ex}}}
+
+\title{How many steps still left to $\MakeLowercase{x}^\ast$?
+}
+
+\author{Emil C\u{a}tina\c{s}\thanks{Tiberiu Popoviciu Institute of Numerical Analysis, Romanian Academy, P.O. Box 68-1, Cluj-Napoca, Romania (\email{ecatinas@ictp.acad.ro}, \url{http://www.ictp.acad.ro/catinas}).}}
+
+\date{ }
+
+\maketitle
+
+
+\section{Introduction}
+
+
+\begin{figure}[h!]
+\centering 
+\begin{subfigure}[b]{0.45\textwidth}
+{\resizebox{.9\linewidth}{!}{
+\begin{tikzpicture}%[scale=.8]
+\begin{axis}[ ]%legend pos = {south west},
+\addplot [domain=1:50, samples=50, color=red, mark=*, mark size=0.5pt, line width=1pt] {1/sqrt(x)};
+\addlegendentry{$\frac 1 {\sqrt{k}}$}
+\addplot [domain=1:50, samples=50, color=blue, mark=*, mark size=0.5pt, line width=1pt] {1/x};
+\addlegendentry{$\frac 1k$}
+\addplot [domain=1:50, samples=50, color=black, mark=*, mark size=0.5pt, line width=1pt] {1/x^4};
+\addlegendentry{$\frac 1{k^4}$}
+\addplot [domain=1:50, samples=50, color=green, mark=*, mark size=0.5pt, line width=1pt] {x/2^x};
+\addlegendentry{$\frac k{2^k}$}
+\addplot [domain=1:50, samples=50, color=cyan, mark=*, mark size=0.5pt, line width=1pt] {1/2^x};
+\addlegendentry{$\frac 1{2^k}$}
+\addplot [domain=1:50, samples=50, color=orange!50, mark=*, mark size=0.5pt, line width=1pt] {1/(x*2^x)};
+\addlegendentry{$\frac 1{k2^k}$}
+\addplot [domain=1:50, samples=50, color=blue!50, mark=*, mark size=0.5pt, line width=1pt] {1/4^x};
+\addlegendentry{$\frac 1{4^k}$}
+\end{axis}
+\end{tikzpicture}
+}}
+\caption{Plotting $(k,|e_k|)$ does not help much.}
+\label{fig: plot errs linear conv}
+\end{subfigure}
+%
+\quad
+%
+\begin{subfigure}[b]{0.45\textwidth}
+{\resizebox{.9\linewidth}{!}{
+\begin{tikzpicture}%[scale=.8]
+\begin{semilogyaxis}[legend pos = {south west}, ]
+\addplot [domain=1:50, samples=50, color=red, mark=*, mark size=0.5pt] {1/sqrt(x)};
+\addlegendentry{$\frac 1 {\sqrt{k}}$}
+\addplot [domain=1:50, samples=50, color=blue, mark=*, mark size=0.5pt, line width=1pt] {1/x};
+\addlegendentry{$\frac 1k$}
+\addplot [domain=1:50, samples=50, color=black, mark=*, mark size=0.5pt, line width=1pt] {1/(x^4)};
+\addlegendentry{$\frac 1{k^4}$}
+\addplot [domain=1:50, samples=50, color=green, mark=*, mark size=0.5pt, line width=1pt] {x/(2^x)};
+\addlegendentry{$\frac k{2^k}$}
+\addplot [domain=1:50, samples=50, color=cyan, mark=*, mark size=0.5pt, line width=1pt] {1/(2^x)};
+\addlegendentry{$\frac 1{2^k}$}
+\addplot [domain=1:50, samples=50, color=orange!50, mark=*, mark size=0.5pt, line width=1pt] {1/(x*2^x)};
+\addlegendentry{$\frac 1{k2^k}$}
+\addplot [domain=1:50, samples=50, color=blue!50, mark=*, mark size=0.5pt, line width=1pt] {1/(4^x)};
+\addlegendentry{$\frac 1{4^k}$}
+\end{semilogyaxis}
+\end{tikzpicture}
+}}
+\caption{Plotting $(k,\lg |e_k|)$ is better.}
+\label{fig: semilog errs linear conv}
+\end{subfigure}
+%
+\caption{(Scaled) chartesian vs. semilog coordinates in visualizing the errors.}
+\label{fig: linear conv plot and semilogy}
+\end{figure}
+
+
+\begin{figure}[h!]
+\centering 
+\begin{tikzpicture}[scale=0.7]
+\begin{semilogyaxis}[legend pos = {south west}, ]
+\addplot [domain=1:20, samples=20, color=red, mark=*, mark size=0.5pt, line width=1pt] {1/(4^x)};
+\addlegendentry{$\frac 1{4^k}$}
+\addplot [domain=1:20, samples=20, color=cyan, mark=*, mark size=0.5pt, line width=1pt] {1/(x^x)};
+\addlegendentry{$\frac 1 {k^k}$}
+\addplot [domain=1:20, samples=20, color=blue, mark=*, mark size=0.5pt, line width=1pt] {1/(2^(x^2))};
+\addlegendentry{$\frac 1 {2^{k^2}}$}
+\end{semilogyaxis}
+\end{tikzpicture}
+\caption{Linear vs. superlinear order.}
+\label{fig: semilogy errs ord 1 and sl - line parabola and betw}
+\end{figure}
+
+
+\begin{figure}[h!]
+\centering
+\begin{tikzpicture}
+\begin{semilogyaxis}[legend pos = {outer north east}, 
+ymin=1e-6500, ymax=1e500, 
+ytickten={-6500, -4750, -3000, -1250, 500},
+yticklabels={$10^{-6500}$,$10^{-4750}$,$10^{-3000}$,$10^{-1250}$,$10^{500}$}
+]
+\addplot [domain=1:20, samples=20, color=blue, mark=*, mark size=0.5pt, line width=1pt] {1/(2^(x^2))};
+\addlegendentry{$\frac 1 {2^{k^2}}$}
+\addplot [domain=1:20, samples=20, color=black, mark=*, mark size=0.5pt, line width=1pt] {1/(2^(x^3))};
+\addlegendentry{$\frac 1 {2^{k^3}}$}
+\addplot [domain=1:18, samples=18, color=orange!50, mark=*, mark size=0.5pt, line width=1pt] {1/(2^((2^x)/x))};
+\addlegendentry{$\frac 1 {2^{2^k/k}}$}
+\addplot [domain=1:14, samples=14, color=blue!50, mark=*, mark size=0.5pt, line width=1pt] {1/(2^(2^x))};
+\addlegendentry{$\frac 1 {2^{2^k}}$}
+\addplot [domain=1:13, samples=13, color=brown!50, mark=*, mark size=0.5pt, line width=1pt] {1/(3^(2^x))}; %just 13
+\addlegendentry{$\frac 1 {3^{2^k}}$}
+\addplot [domain=1:10, samples=10, color=green, mark=*, mark size=0.5pt, line width=1pt] {1/(2^(x*2^x))};
+\addlegendentry{$\frac 1 {2^{k2^k}}$}
+\addplot [domain=1:8, samples=8, color=cyan!50, mark=*, mark size=0.5pt, line width=1pt] {1/(2^(3^x))};
+\addlegendentry{$\frac 1 {2^{3^k}}$}
+\addplot [domain=1:5, samples=5, color=magenta!50, mark=*, mark size=0.5pt, line width=1pt] {1/(2^(2^(x^1.5))))};
+\addlegendentry{$\frac 1 {2^{2^{k\sqrt{k}}}}$}
+\addplot [domain=1:3, samples=3, color=olive, mark=*, mark size=0.5pt, line width=1pt] {1/(2^(2^(x^2)))};
+\addlegendentry{$\frac 1 {2^{2^{k^2}}}$}
+\end{semilogyaxis}
+\end{tikzpicture}
+%
+\caption{Sequences with superlinear, quadratic, cubic and infinite orders.}
+\label{fig: semilogy errs std conv sl 1 2 3 inf}
+\end{figure}
+
+
+
+
+\begin{figure}[h!]
+\centering 
+\begin{subfigure}[b]{0.45\textwidth}
+{\resizebox{.9\linewidth}{!}{
+\begin{tikzpicture}
+%\begin{semilogyaxis}[legend pos = {south west}, ]
+    \begin{groupplot}[%
+      group style={ group name={my plots}, group size=1 by 1},
+      ymax=100, ymin=1e-400,]
+      \nextgroupplot[ymode=log, legend pos = {south west}]%
+      \addplot+[domain=1:9, samples=9, color=cyan, mark=*, mark size=0.7pt, line width=1.5pt] {1/(2^(2^x))};
+      \addlegendentry{$\frac 1 {2^{2^k}}$}
+      \addplot+[domain=1:9, samples=9, color=black, mark=*, mark size=0.7pt, line width=1.5pt, dotted] {(1/(3^(2^x)))*mod(x,2) + 1/(2^(2^x))*mod(x+1,2)};
+      \addlegendentry{$x^b_k$}
+      \addplot+[domain=1:9, samples=9, color=violet, mark=*, mark size=0.7pt, line width=1.5pt] {1/(3^(2^x))};
+      \addlegendentry{$\frac 1 {5^{2^k}}$}
+      \addplot+[domain=1:9, samples=9, color=red, mark=*, mark size=0.7pt, line width=1.5pt, dotted] {(1/(3^(2^x)))*mod(x,2) + 1/(2^(3^x))*mod(x+1,2)};
+      \addlegendentry{$x^a_k$}
+      \addplot+[domain=1:7, samples=7, color=blue, mark=*, mark size=0.7pt, line width=1.5pt] {1/(2^(3^x))};
+      \addlegendentry{$\frac 1 {2^{3^k}}$}
+    \end{groupplot}
+
+\end{tikzpicture}
+}}
+\caption{}
+\label{fig: semilogy errs merged seq ords 3 2}
+\end{subfigure}
+%
+\qquad
+%
+\begin{subfigure}[b]{0.45\textwidth}
+{\resizebox{.9\linewidth}{!}{
+\begin{tikzpicture}
+    \begin{groupplot}[%
+      group style={ group name={my plots}, group size=1 by 1},
+      ymax=100, ymin=1e-400,]
+      \nextgroupplot[ymode=log, legend pos = {south west}]%
+      \addplot+[domain=1:9, samples=9, color=red, mark=*, mark size=0.7pt, line width=1.5pt] {1/(1.3^(2^x))};
+      \addlegendentry{$\frac 1 {1.3^{2^k}}$}
+      \addplot+[domain=1:9, samples=9, color=cyan, mark=*, mark size=0.7pt, line width=1.5pt] {1/(2^(2^x))};
+      \addlegendentry{$\frac 1 {2^{2^k}}$}
+      \addplot+[domain=1:9, samples=9, color=blue, mark=*, mark size=0.7pt, line width=1.5pt, dotted] {(1/(5^(2^x)))*mod(x,2) + 1/(2^(2^x))*mod(x+1,2)};
+      \addlegendentry{$x^c_k$}
+      \addplot+[domain=1:9, samples=9, color=black, mark=*, mark size=0.7pt, line width=1.5pt] {1/(5^(2^x))};
+      \addlegendentry{$\frac 1 {5^{2^k}}$}
+    \end{groupplot}
+\end{tikzpicture}
+}}
+\caption{}
+\label{fig: semilogy errs seq ords 3 2 xck 2}
+\end{subfigure}
+%
+\caption{Ranking sequences visually, by \cref{eq: |x*-xk| <= |x*-yk|}.}
+\label{fig: semilog errs merged seq 3w2 and 2w2}
+\end{figure}
+
+
+
+\begin{figure}[h!]
+\centering 
+\begin{subfigure}[b]{0.45\textwidth}
+{\resizebox{.9\linewidth}{!}{
+\begin{tikzpicture}
+\begin{semilogyaxis}[legend pos = {south west}, ymin=10^-4000, ymax=10, xmin=0, xmax=20, 
+yticklabels={$10^{-4000}$, $10^{-3000}$, $10^{-2000}$, $10^{-1000}$, $10^0$}]
+\addplot [domain=1:14, samples=14, color=blue, mark=*, mark size=1pt, line width=1.5pt] {1/(2^(2^x))};
+\addlegendentry{$\{\dot{x}_k\}$}
+\end{semilogyaxis}
+\end{tikzpicture}
+}}
+\caption{The first $14$ terms of $\{\dot{x}_k\}$.}
+\label{fig: semilogy errs barbar xk seems fast}
+\end{subfigure}
+%
+\qquad
+%
+\begin{subfigure}[b]{0.45\textwidth}
+{\resizebox{.9\linewidth}{!}{
+\begin{tikzpicture}
+\begin{semilogyaxis}[legend pos = {south west}, ymin=10^-550, ymax=10^50, xmin=0, xmax=10, ]
+\addplot [domain=1:10, samples=10, color=olive, mark=*, mark size=1pt, line width=1.5pt] {1/(2^(2^x))};
+\addlegendentry{$\{\mathring{x}_k\}$}
+\end{semilogyaxis}
+\end{tikzpicture}
+}}
+\caption{The first $10$ terms of $\{\mathring{x}_k\}$.}
+\label{fig: semilogy errs bar xk seems slow}
+\end{subfigure}
+%
+\caption{\cref{quiz: given graph errors which is faster?} (the answers to quizzes are given in the end of the paper).}
+
+\label{fig: semilogy errs barbar xk= bar xk = 1/2^2^k in 2 different windows}
+\end{figure}
+
+
+
+
+\begin{figure}[h!]
+\centering 
+\begin{tikzpicture}
+\begin{semilogyaxis}[legend pos = {outer north east}, ymin=10^-50, ymax=10^50, xmin=0, xmax=14, ]
+\addlegendimage{empty legend}, \addlegendentry{$\{\frac {10^{-5}}{2^{2^k}}\}$} 
+\addplot [domain=1:13, samples=13, color=magenta, mark=*, mark size=0.5pt, line width=1.5pt] {10^(5*(1.8-1))*2^((1.8-2)*2^x)};
+\addlegendentry{$1.8$}
+\addplot [domain=1:13, samples=13, color=red, mark=*, mark size=0.5pt, line width=1.5pt] {10^5*2^((2-2)*2^x)};
+\addlegendentry{$2$}
+\addplot [domain=1:13, samples=13, color=orange, mark=*, mark size=0.5pt, line width=1.5pt] {10^(5*(2.2-1))*2^((2.2-2)*2^x)};
+\addlegendentry{$2.2$}
+%
+\addlegendimage{empty legend}, \addlegendentry{$\{\frac 1{2^{2^k/k}}\}$} 
+\addplot [domain=1:13, samples=13, color=blue!50, mark=*, mark size=1pt, line width=1.5pt, ] %{(2^(1.8*2^x/x))/(2^(2^(x+1)/(x+1)))};
+{2^((1.8/x-2/(x+1))*2^x)};
+\addlegendentry{$1.8$}
+\addplot [domain=1:13, samples=13, color=blue, mark=*, mark size=1pt, line width=1.5pt, ] {(2^(2*2^x/x))/(2^(2^(x+1)/(x+1)))};
+\addlegendentry{$2$}
+\addplot [domain=1:13, samples=13, color=cyan, mark=*, mark size=1pt, line width=1.5pt, ] {(2^(2.2*2^x/x))/(2^(2^(x+1)/(x+1)))};
+\addlegendentry{$2.2$}
+%
+\addlegendimage{empty legend}, \addlegendentry{$\{x^d_k\}$} 
+\addplot [domain=1:10, samples=10, color=green!50, mark=*, mark size=1pt, line width=1.5pt, ] {(10^(1+1.8)*mod(x-1,2) + 1/10^(1+1.8)*mod(x,2))/3^((2-1.8)*2^x)};
+\addlegendentry{$1.8$}
+\addplot [domain=1:13, samples=13, color=olive, mark=*, mark size=1pt, line width=1.5pt, ] {1000*mod(x-1,2) + 0.001*mod(x,2)};
+\addlegendentry{$2$}
+\addplot [domain=1:13, samples=13, color=green!150, mark=*, mark size=1pt, line width=1.5pt, ] {(10^(1+2.2)*mod(x-1,2) + 1/10^(1+2.2)*mod(x,2))/3^((2-2.2)*2^x)};
+\addlegendentry{$2.2$}
+\end{semilogyaxis}
+\end{tikzpicture}
+\caption{$Q_p(k)$, $k=\overline{1,13}$ ($p=1.8$, $2$, $2.2$).
+}
+\label{fig: Qp(k) k=1-13 p=1.8 2 2.2}
+\end{figure}
+
+
+
+\begin{figure}[h!]
+\centering
+\begin{tikzpicture}
+\draw [->, line width =1pt] (0,2.5) -- (0,0) -- (5,0);
+\draw [line width =1pt, densely dotted] (0,2.5) -- (0,3);
+\draw [fill] (0,3) circle [radius=0.06];
+
+\draw [line width=4pt, blue] (1,0) -- (1.9,0);
+%\addlegendentry{$\bar{Q}_p$} %?
+\draw [line width=1pt, blue] (2,0) circle [radius=0.1];
+\draw [line width=2pt, red] (1,0) -- (1.9,0);
+\draw [line width=1pt, red] (2,0) circle [radius=0.07];
+%
+\draw [line width=1pt, blue, fill] (2,1) circle [radius=0.1];
+\draw [red, fill] (2,1) circle [radius=0.06];
+%
+\draw [line width=4pt, blue] (2.1,3) -- (5,3);
+\draw [line width=1pt, blue] (2,3) circle [radius=0.1];
+\draw [line width=2pt, red] (2.1,3) -- (5,3); 
+\draw [line width=1pt, red] (2,3) circle [radius=0.07];
+%
+\node [left] at (0,3) {$\infty$};
+\node [below] at (2,0) {$p_0=2$};
+\node [left] at (0,1) {$1$};
+\draw[fill] (0,1) circle [radius=0.025];
+\node [below right] at (5,0) {$p$};
+
+\draw [line width=4pt, blue] (3.7,2.5) -- (4.3,2.5); 
+\node [] at (4.7,2.5) {$\bar{Q}_p$};
+\draw [line width=2pt, red] (3.7,2.1) -- (4.3,2.1); 
+\node [] at (4.7,2.) {$\barbelow{Q}_p$};
+\draw[] (3.5, 1.75) rectangle (5,2.8);
+%
+\end{tikzpicture}
+\caption{$Q$-convergence profile for $\big\{\frac1{2^{2^k}}\big\}$: the limit points of $Q_p(k)$ as "functions" of $p$. The vertical scale is not to scale.}
+\label{fig: C-order 2}
+\end{figure}
+
+
+
+
+\begin{figure}[h!]
+\centering 
+\begin{subfigure}[b]{0.45\textwidth}
+{\resizebox{.9\linewidth}{!}{
+\begin{tikzpicture}
+\draw [->, line width =1pt] (0,2.5) -- (0,0) -- (5,0);
+\draw [line width =1pt, densely dotted] (0,2.5) -- (0,3);
+\draw [fill] (0,3) circle [radius=0.06];
+
+\draw [line width=4pt, blue] (1,0) -- (1.9,0);
+\draw [line width=1pt, blue] (2,0) circle [radius=0.1];
+\draw [line width=2pt, red] (1,0) -- (1.9,0);
+\draw [line width=1pt, red] (2,0) circle [radius=0.07];
+
+\draw [line width=1pt, blue] (2,3) circle [radius=0.1];
+\draw [red, fill] (2,3) circle [radius=0.06];
+
+\draw [line width=4pt, blue] (2.1,3) -- (5,3);
+\draw [line width=1pt, blue] (2,3) circle [radius=0.1];
+\draw [line width=2pt, red] (2.1,3) -- (5,3);
+\draw [line width=1pt, red] (2,3) circle [radius=0.07];
+
+\node [left] at (0,3) {$\infty$};
+\node [below] at (2,0) {$p_0=2$};
+\node [left] at (0,1) {$1$};
+\draw[fill] (0,1) circle [radius=0.025];
+\node [below right] at (5,0) {$p$};
+
+\draw [line width=4pt, blue] (3.7,2.5) -- (4.3,2.5); 
+\node [] at (4.7,2.5) {$\bar{Q}_p$};
+\draw [line width=2pt, red] (3.7,2.1) -- (4.3,2.1); 
+\node [] at (4.7,2.) {$\barbelow{Q}_p$};
+\draw[] (3.5, 1.75) rectangle (5,2.8);
+\end{tikzpicture}
+}}
+\caption{$Q$-profile for $\big\{\frac1{2^{2^k/k}}\big\}$.}
+    \label{fig: Q-conv profile of 1/2^2^k/k}
+\end{subfigure}
+%
+\qquad
+%
+\begin{subfigure}[b]{0.45\textwidth}
+{\resizebox{.9\linewidth}{!}{
+\begin{tikzpicture}
+\draw [->, line width =1pt] (0,2.5) -- (0,0) -- (5,0);
+\draw [line width =1pt, densely dotted] (0,2.5) -- (0,3);
+\draw [fill] (0,3) circle [radius=0.06];
+\draw [line width=4pt, blue] (1,0) -- (1.9,0);
+\draw [line width=1pt, blue] (2,0) circle [radius=0.1];
+\draw [line width=2pt, red] (1,0) -- (1.9,0);
+\draw [line width=1pt, red] (2,0) circle [radius=0.07];
+
+\draw [line width=1pt, blue] (2,3) circle [radius=0.1];
+\draw [line width=1pt, blue, fill] (2,1.95) circle [radius=0.1];
+\draw [red, fill] (2,0.51) circle [radius=0.06];
+
+\draw [line width=4pt, blue] (2.1,3) -- (5,3);
+\draw [line width=1pt, blue] (2,3) circle [radius=0.1];
+\draw [line width=2pt, red] (2.1,3) -- (5,3);
+\draw [line width=1pt, red] (2,3) circle [radius=0.07];
+
+\node [left] at (0,3) {$\infty$};
+\node [below] at (2,0) {$p_0=2$};
+\node [left] at (0,0.51) {$1/c^3$};
+\node [left] at (0,1.95) {$c^3$};
+\node [left] at (0,1) {$1$};
+\draw[fill] (0,0.51) circle [radius=0.025];
+\draw[fill] (0,1) circle [radius=0.025];
+\draw[fill] (0,1.95) circle [radius=0.025];
+\node [below right] at (5,0) {$p$};
+
+\draw [line width=4pt, blue] (3.7,2.5) -- (4.3,2.5); 
+\node [] at (4.7,2.5) {$\bar{Q}_p$};
+\draw [line width=2pt, red] (3.7,2.1) -- (4.3,2.1); 
+\node [] at (4.7,2.) {$\barbelow{Q}_p$};
+\draw[] (3.5, 1.75) rectangle (5,2.8);
+\end{tikzpicture}
+}}
+\caption{$Q$-profile for $\{x_k^d\}$, $c=\frac 54$.}
+\label{fig: Q-profile of exact Q-quadratic}
+\end{subfigure}
+\caption{$Q$-profiles: (\subref{fig: Q-conv profile of 1/2^2^k/k}) $Q$-subquadratic; 
+(\subref{fig: Q-profile of exact Q-quadratic}) example of exact $Q$-quadratic.}
+\label{fig: Q-profiles Q-subquadratic and exact Q-quadratic}
+\end{figure}
+
+
+
+\begin{figure}
+\begin{tikzpicture}
+\begin{semilogyaxis}[legend pos = {outer north east}, ytick={1,2,3,4}, yticklabels={1,2,3,4}]
+\addlegendimage{empty legend}, \addlegendentry{$\Big\{10^2\cdot 2^{-3^\frac{k^2-1}{k}}\Big\}$} 
+\addplot [domain=2:8, samples=7, color=olive, mark=*, mark size=1pt, line width=1pt] {ln(100*2^(-3^( ((x+1)^2-1)/(x+1) ) ) )/ln(100*2^(-3^( (x^2-1)/x )))};
+\addlegendentry{$Q_L$}
+\addplot [domain=2:8, samples=7, color=green, mark=*, mark size=1pt, line width=1pt] {ln((100*2^(-3^(((x+1)^2-1)/(x+1))))/(100*2^(-3^((x^2-1)/x ))))/ln((100*2^(-3^((x^2-1)/x)))/(100*2^(-3^(((x-1)^2-1)/(x-1)))))};
+\addlegendentry{$Q_\Lambda$}
+%
+\addlegendimage{empty legend}, \addlegendentry{$\Big\{10^2\cdot 3^{-2^\frac{k^2+1}{k}}\Big\}$} 
+\addplot [domain=2:12, samples=11, color=blue, mark=*, mark size=1pt, line width=1.pt, ] {ln( 100*3^(-2^( ((x+1)^2+1)/(x+1) ) ) )/ln(100*3^(-2^( (x^2+1)/x )))};
+\addlegendentry{$Q_L$}
+\addplot [domain=2:12, samples=11, color=cyan, mark=*, mark size=1pt, line width=1.pt, ] {ln((100*3^(-2^(((x+1)^2+1)/(x+1))))/(100*3^(-2^((x^2+1)/x ))))/ln((100*3^(-2^( (x^2+1)/x )))/(100*3^(-2^(((x-1)^2+1)/(x-1)))))};
+\addlegendentry{$Q_\Lambda$}
+%
+\addlegendimage{empty legend}, \addlegendentry{$\{\frac 1{k^k}\}$} 
+\addplot [domain=2:13, samples=12, color=magenta, mark=*, mark size=1pt, line width=1pt, ] {ln((x+1)^(-x-1))/ln(x^(-x))};
+\addlegendentry{$Q_L$}
+\addplot [domain=2:13, samples=12, color=red, mark=*, mark size=1pt, line width=1pt, ] {ln(((x+1)^(-x-1))/x^(-x))) / ln((x^(-x))/((x-1)^(-x+1))))};
+\addlegendentry{$Q_\Lambda$}
+\end{semilogyaxis}
+\end{tikzpicture}
+\caption{$Q_L(k)$ and $Q_\Lambda(k-1)$ computed for three sequences.}
+\label{fig: Q_l(k) Q_Lam(k-1)}
+\end{figure}
+
+
+
+\begin{figure}[h!]
+\centering 
+\begin{subfigure}[b]{0.425\textwidth}
+{\resizebox{1\linewidth}{!}{
+\begin{tikzpicture}
+\draw [->, line width =1pt] (0,2.5) -- (0,0) -- (5,0);
+\draw [line width =1pt, densely dotted] (0,2.5) -- (0,3);
+\draw [fill] (0,3) circle [radius=0.06];
+
+\draw [line width=4pt, blue] (1,0) -- (1.1,0);
+\draw [line width=1pt, blue] (1.2,0) circle [radius=0.1];
+\draw [line width=2pt, red] (1,0) -- (3.05,0);
+\draw [line width=1pt, red] (3.1,0) circle [radius=0.07];
+
+\draw [line width=1pt, blue, fill] (1.2,1) circle [radius=0.1];
+\draw [red, fill] (3.1,1) circle [radius=0.06];
+
+\draw [line width=4pt, blue] (1.3,3) -- (5,3);
+\draw [line width=1pt, blue] (1.2,3) circle [radius=0.1];
+\draw [line width=2pt, red] (3.15,3) -- (5,3);
+\draw [line width=1pt, red] (3.1,3) circle [radius=0.07];
+
+\node [left] at (0,3) {$\infty$};
+\node [below ] at (1.2,0) {$q_l$};
+\node [below ] at (3.1,0) {$q_u$};
+\node [left] at (0,1) {$1$};
+\draw[fill] (0,1) circle [radius=0.025];
+\node [below right] at (4.9,0) {$p$};
+
+\draw [line width=4pt, blue] (3.7,2.5) -- (4.3,2.5); 
+\node [] at (4.7,2.5) {$\bar{Q}_p$};
+\draw [line width=2pt, red] (3.7,2.1) -- (4.3,2.1); 
+\node [] at (4.7,2.) {$\barbelow{Q}_p$};
+\draw[] (3.5, 1.75) rectangle (5,2.8);
+\end{tikzpicture}
+}}
+\caption{$Q$-profile of $\{x^b_k\}$ (no $Q$-order).}
+\label{fig: no Q-order}
+\end{subfigure}
+%
+\qquad
+%
+\begin{subfigure}[b]{0.425\textwidth}
+{\resizebox{1\linewidth}{!}{
+\begin{tikzpicture}
+\draw [<->, line width =1pt] (0,3) -- (0,0) -- (5,0);
+\draw [line width=4pt, blue] (1,0) -- (1.9,0);
+\draw [line width=1pt, blue] (2,0) circle [radius=0.1];
+\draw [line width=2pt, red] (1,0) -- (1.9,0);
+\draw [line width=1pt, red] (2,0) circle [radius=0.07];
+
+\draw [line width=1pt, blue, fill] (2,0.5) circle [radius=0.1];
+\draw [red, fill] (2,0.3) circle [radius=0.06];
+
+\draw [line width=4pt, blue] (2.1,1) -- (5,1);
+\draw [line width=1pt, blue] (2,1) circle [radius=0.1];
+\draw [line width=2pt, red] (2.1,1) -- (5,1);
+\draw [line width=1pt, red] (2,1) circle [radius=0.07];
+
+%\node [left] at (0,3.5) {$\infty$};
+\node [left] at (0,0.5) {$0.5$};
+\draw[fill] (0,0.5) circle [radius=0.025];
+\node [below] at (2,0) {$p_0=2$};
+\node [left] at (0,1) {$1$};
+\draw[fill] (0,1) circle [radius=0.025];
+\node [below right] at (4.9,0) {$p$};
+\draw[fill] (0,0.33) circle [radius=0.025];
+\draw [line width=4pt, blue] (3.7,2.5) -- (4.3,2.5); 
+\node [] at (4.7,2.5) {$\bar{R}_p$};
+\draw [line width=2pt, red] (3.7,2.1) -- (4.3,2.1); 
+\node [] at (4.7,2.) {$\barbelow{R}_p$};
+\draw[] (3.5, 1.75) rectangle (5,2.8);
+\end{tikzpicture}
+}}
+\caption{$R$-profile of $\{x^b_k\}$ (exact $R$-order $2$).}
+\label{fig: conv profile exact R-order 2 for xak}
+
+\end{subfigure}
+%
+\caption{(\subref{fig: no Q-order}): a $Q$-profile; (\subref{fig: conv profile exact R-order 2 for xak}): an $R$-profile.}
+\end{figure}
+
+
+\end{document}
