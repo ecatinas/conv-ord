@@ -280,7 +280,7 @@ yticklabels={$10^{-4000}$, $10^{-3000}$, $10^{-2000}$, $10^{-1000}$, $10^0$}]
 }
 \label{fig: Qp(k) k=1-13 p=1.8 2 2.2}
 \end{figure}
-
+%sometimes the last term of Qp(k), k = 13, {x_k}={x_k^d} is not computed correctly!!
 
 
 \begin{figure}[h!]
