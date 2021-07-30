@@ -1,4 +1,4 @@
-% version 20-09-20
+% version 21-07-29
 \documentclass[review]{siamart190516}
 \usepackage{amsmath}
 \usepackage{amsfonts}
@@ -27,7 +27,7 @@
 \title{How many steps still left to $\MakeLowercase{x}^\ast$?
 }
 
-\author{Emil C\u{a}tina\c{s}\thanks{Tiberiu Popoviciu Institute of Numerical Analysis, Romanian Academy, P.O. Box 68-1, Cluj-Napoca, Romania (\email{ecatinas@ictp.acad.ro}, \url{http://www.ictp.acad.ro/catinas}).}}
+\author{Emil C\u{a}tina\c{s}\thanks{``Tiberiu Popoviciu'' Institute of Numerical Analysis, Romanian Academy, P.O. Box 68-1, Cluj-Napoca, Romania (\email{ecatinas@ictp.acad.ro}, \url{http://www.ictp.acad.ro/catinas}).}}
 
 \date{ }
 
@@ -280,7 +280,7 @@ yticklabels={$10^{-4000}$, $10^{-3000}$, $10^{-2000}$, $10^{-1000}$, $10^0$}]
 }
 \label{fig: Qp(k) k=1-13 p=1.8 2 2.2}
 \end{figure}
-%sometimes the last term of Qp(k), k = 13, {x_k}={x_k^d} is not computed correctly!!
+%sometimes the last term of Qp(k)=Q2(k), k = 13, {x_k}={x_k^d} is not computed correctly!!
 
 
 \begin{figure}[h!]
@@ -522,5 +522,8 @@ yticklabels={$10^{-4000}$, $10^{-3000}$, $10^{-2000}$, $10^{-1000}$, $10^0$}]
 \caption{(\subref{fig: no Q-order}): a $Q$-profile; (\subref{fig: conv profile exact R-order 2 for xak}): an $R$-profile.}
 \end{figure}
 
+%the rest of figures can be found shared at Overleaf, 
+% https://www.overleaf.com/read/msnybxbjsgwx
+%as they require data files containing the information to be plotted.
 
 \end{document}
