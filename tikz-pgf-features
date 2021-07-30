@@ -1,7 +1,7 @@
 % version 21-07-29
+% this is a LaTeX file
 
-% perhaps the easiest way to compile this file is in the Overleaf environment,
-% as the installation of packages is not required.
+% an easy way to compile this file is in the Overleaf environment.
 % the file is shared at
 % https://www.overleaf.com/read/msnybxbjsgwx
 % (registering and signing in are required)
