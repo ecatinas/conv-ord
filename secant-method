@@ -1,0 +1,109 @@
+
+"""
+version 21-07-30
+this is a Julia file
+
+Notes on running this program
+A. no instalation of Julia (i.e., using IJulia):
+-go to [binder]
+-wait (!) until the notes are editable, so you can replace any of them by this program
+-run
+
+B. installing notes on Julia may be found at http://julialang.org
+An easy procedure is to install (in Windows)
+- Julia (while installing, copy the path where Julia is installed)
+  (http://julialang.org/downloads)
+- Atom (https://atom.io/)
+- Uber Juno https://docs.junolab.org/latest/man/installation/
+  (you need to insert the copied path in Atom->packages->settings->Julia path and to add full directory)
+ 
+--------------
+
+Julia program for studying the Q-orders,
+by computing Q(k), QL(k), QΛ(k), Q′(k), QL′(k), QΛ′(k)
+for Example 4.24 in
+E. Catinas, How many steps still left to x*?, SIAM Review, to appear
+
+problem: f(x) = x + x^(1+α) = 0 (α= 1, 2 or 3); x*=0
+method:  the secant method
+results: Q-order (1+sqrt(1+4α))/2 = λ_α, and moreover, when
+α=1: C-order λ1
+α=2: no C-order, but exact Q-order λ2
+α=3: no C-order, no exact Q-order, but just Q-order λ3
+
+====
+Note on writing the identifiers
+α is written (e.g., in Atom/Juno) as \alpha + tab
+or at the REPL prompt as \alpha + tab
+
+Λ′ at the REPL prompt as \Lambda + tab \prime tab
+note that QΛ′ is an identifier (′ does not stand here for transpose or derivative)
+"""
+
+
+setprecision(300)   #52 corresponds to the usual double precision
+println("epsBigFl=","\n",eps(BigFloat),"\n")   # the ϵ for increased precision numbers
+N = 20  # max no of iterations
+α = BigFloat(1.0)  #parameter in f(x) = x + x^(1+α)
+p = BigFloat((1+sqrt(1+4α))/2)     #true Q-order for the secant method
+println("true Q-order secant method for fα(x) is:\np=",p)
+function f(x,α)
+    x + x^(1+α)
+end
+
+x = zeros(BigFloat,N)
+x[1] = BigFloat(0.5) #1
+x[1] = BigFloat(1) #1
+global xc = BigFloat(1/α^p)  #current x
+global xc = BigFloat(0.5)  #current x
+println("##########################################","\n","secant iterates")
+global k = 1
+
+while xc != 0
+    global k = k + 1
+    global xc
+    x[k] = xc
+    xc = x[k] - f(x[k],α)/(f(x[k],α) - f(x[k-1],α))*(x[k] - x[k-1])
+    println("k=",k,"\n x=",x[k],"\n")
+end
+n = k
+e = abs.(x);  #xn becomes error en
+
+println("############################","\n","Qp","\n")
+Qp = zeros(BigFloat,n)
+for k=2:n
+    Qp[k]=e[k]/e[k-1]^p
+    println("k=",k-1)
+    println("Qp=",Qp[k],"\n")
+end
+
+println("=================================","\n","QL, QΛ","\n")
+QL = zeros(BigFloat,n)
+QΛ = zeros(BigFloat,n)
+QL[2] = log(e[2])/log(e[1])
+println("k=2\nQL(2)=     ",QL[2],"\n","|p-QL(2)|= ",abs(QL[2]-p),"\n")
+for k=3:n
+    QL[k] = log(e[k])/log(e[k-1])
+    QΛ[k] = log(e[k]/e[k-1])/log(e[k-1]/e[k-2])
+    println("\nk=",k,"\n","QL(k)=     ",QL[k])
+    println("|p-QL(k)|= ",abs(QL[k]-p))
+    println("QΛ(k)=     ",QΛ[k])
+    println("|p-QΛ(k)|= ",abs(QΛ[k]-p))
+end
+
+println("\n\n\n=======================================","\n","QL′, QΛ′ (based on corrections - p not used/known)","\n")
+s = zeros(BigFloat,n)
+s[2:n] = abs.(x[2:n] - x[1:n-1])
+QL′ = zeros(BigFloat,n)
+QΛ′ = zeros(BigFloat,n)
+QL′[3] = log(s[3])/log(s[2])
+println("k=3\nQL′(k)=     ",QL′[3],"\n|p-QL′(k)|= ",abs(QL′[k]-p),"\n")
+for k=4:n
+    println("k=",k)
+    QL′[k] = log(s[k])/log(s[k-1])
+    QΛ′[k] = log(s[k]/s[k-1])/log(s[k-1]/s[k-2])
+    println("QL′(k)=     ",QL′[k])
+    println("|p-QL′(k)|= ",abs(QL′[k]-p))
+    println("QΛ′(k)=     ",QΛ′[k])
+    println("|p-QΛ′(k)|= ",abs(QΛ′[k]-p),"\n")
+end
