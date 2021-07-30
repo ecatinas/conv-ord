@@ -1,4 +1,11 @@
 % version 21-07-29
+
+% perhaps the easiest way to compile this file is in the Overleaf environment,
+% as the installation of packages is not required.
+% the file is shared at
+% https://www.overleaf.com/read/msnybxbjsgwx
+% (registering and signing in are required)
+
 \documentclass[review]{siamart190516}
 \usepackage{amsmath}
 \usepackage{amsfonts}
