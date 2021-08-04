@@ -1,43 +1,61 @@
-
 """
-version 21-07-30
+version 21-08-04
 this is a Julia file
 
 Notes on running this program
-A. no instalation of Julia (i.e., using IJulia):
--go to [binder]
--wait (!) until the notes are editable, so you can replace any of them by this program
--run
+(A) online, no installation at all:
+-go to https://mybinder.org/v2/gh/binder-examples/demo-julia/master?filepath=demo.ipynb
+-wait (!) until the notes are editable
+-copy this file and replace any block by this program
+-click run
 
-B. installing notes on Julia may be found at http://julialang.org
+(B) installing notes on Julia may be found at http://julialang.org
 An easy procedure is to install (in Windows)
-- Julia (while installing, copy the path where Julia is installed)
-  (http://julialang.org/downloads)
+- Julia (http://julialang.org/downloads)
+  (while installing, you will be asked to set the Julia path;
+  before proceeding, you should save the path, e.g., <ctrl-c>)
 - Atom (https://atom.io/)
 - Uber Juno https://docs.junolab.org/latest/man/installation/
-  (you need to insert the copied path in Atom->packages->settings->Julia path and to add full directory)
- 
---------------
+Finally, run Atom; you need to insert the copied Julia path in Atom->packages->settings->Julia path
+  and to complete to full directory [i.e., where the .exe file is])
 
+--------------
+An important note on the Julia language. This is not a bug, but a "feature".
+When considering the instructions below, "global" or "local" should be considered
+
+k = 1
+while k<5
+    global k = k+1
+    println("k=",k)
+end
+--------------
+And another note, on Julia identifiers.
+It is so legible to be able to use identifiers such as QΛ′, x⃰, P̂′, Σᵦ
+(note that ′ here is not connected to derivation or transpose)
+"""
+
+# one can obtain
+# Λ′ as \Lambda [tab] \prime [tab]
+# λ₁ as \lambda [tab] \_1 [tab]
+# (but unfortunately Λ cannot be set as lower index, as other characters can)
+# x⃰ as x\asteraccent [tab]
+# P̂′ as P\hat [tab] \prime [tab]
+# Σᵦ as \Sigma\_[and choose \beta in the autofill options]
+
+"""
+---------------
 Julia program for studying the Q-orders,
 by computing Q(k), QL(k), QΛ(k), Q′(k), QL′(k), QΛ′(k)
 for Example 4.24 in
-E. Catinas, How many steps still left to x*?, SIAM Review, to appear
+E. Catinas, How many steps still left to x*?, SIAM Review, 2021
 
 problem: f(x) = x + x^(1+α) = 0 (α= 1, 2 or 3); x*=0
 method:  the secant method
 results: Q-order (1+sqrt(1+4α))/2 = λ_α, and moreover, when
-α=1: C-order λ1
-α=2: no C-order, but exact Q-order λ2
-α=3: no C-order, no exact Q-order, but just Q-order λ3
+α=1: C-order λ₁≈1.6 (the golden mean)
+α=2: no C-order, but exact Q-order λ₂=2
+α=3: no C-order, no exact Q-order, but just Q-order λ₃
 
-====
-Note on writing the identifiers
-α is written (e.g., in Atom/Juno) as \alpha + tab
-or at the REPL prompt as \alpha + tab
-
-Λ′ at the REPL prompt as \Lambda + tab \prime tab
-note that QΛ′ is an identifier (′ does not stand here for transpose or derivative)
 """
 
 
@@ -52,10 +70,8 @@ function f(x,α)
 end
 
 x = zeros(BigFloat,N)
-x[1] = BigFloat(0.5) #1
-x[1] = BigFloat(1) #1
-global xc = BigFloat(1/α^p)  #current x
-global xc = BigFloat(0.5)  #current x
+x[1] = BigFloat(0.5)
+xc = BigFloat(1/α^p)  #current x
 println("##########################################","\n","secant iterates")
 global k = 1
 
@@ -67,7 +83,7 @@ while xc != 0
     println("k=",k,"\n x=",x[k],"\n")
 end
 n = k
-e = abs.(x);  #xn becomes error en
+e = abs.(x);  #xₖ becomes error eₖ for each component
 
 println("############################","\n","Qp","\n")
 Qp = zeros(BigFloat,n)
